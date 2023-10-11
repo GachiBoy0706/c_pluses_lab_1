@@ -19,7 +19,7 @@ double Div(std::vector<double> vec) {
 
 
 std::vector<std::string> get_plugins_filenames() {
-	const std::filesystem::path plugins{ "Debug/plugins" };
+	const std::filesystem::path plugins{ "plugins" };
 	std::vector<std::string> files = {};
 	for (auto const& dir_entry : std::filesystem::directory_iterator{ plugins })
 		if (dir_entry.path().extension() == ".dll") {
@@ -115,7 +115,7 @@ std::vector<std::string> Calculator::Parse(std::string& str) {
 		if (str[ch] >= 'a' && str[ch] <= 'z') {
 			std::string s;//transformation char into string
 			std::stringstream ss;
-			while (str[ch] >= 'a' && str[ch] <= 'z') {
+			while (isalpha(str[ch])) {
 				ss << str[ch];
 				++ch;
 			}
@@ -148,9 +148,9 @@ std::vector<std::string> Calculator::Parse(std::string& str) {
 			continue;
 		}
 		//writing a word
-		if (int(str[ch]) >= '0' && int(str[ch]) <= '9' && ch < str.size()) {
+		if (isdigit(str[ch]) && ch < str.size()) {
 			int number = 0;
-			while (int(str[ch]) >= 48 && int(str[ch]) <= 57 && ch < str.size()) {
+			while (isdigit(str[ch]) && ch < str.size()) {
 				number = number * 10 + int(str[ch]) - 48;
 				++ch;
 			}
@@ -163,11 +163,8 @@ std::vector<std::string> Calculator::Parse(std::string& str) {
 		throw "incorrect closing braces";
 	return parsed;
 }
-
-std::vector<std::string> Calculator::Postfix_Entry(std::vector<std::string>& parsed, std::map < std::string, Function>& map_of_func) {
-	std::stack<std::string> stack;
-	std::vector<std::string> answer;
-	//checking for the correctness of the sequence
+//checking for the correctness of the sequence
+void is_string_valid(std::vector<std::string>& parsed) {
 	for (int i = 0; i < parsed.size() - 1; ++i) {
 		if (std::isalpha(parsed[i][0])) {
 			if (std::isalpha(parsed[i + 1][0]))
@@ -196,13 +193,17 @@ std::vector<std::string> Calculator::Postfix_Entry(std::vector<std::string>& par
 			throw "Empty brackets";
 
 	}
+}
 
-
+std::vector<std::string> Calculator::Postfix_Entry(std::vector<std::string>& parsed, std::map < std::string, Function>& map_of_func) {
+	std::stack<std::string> stack;
+	std::vector<std::string> answer;
+	is_string_valid(parsed);
 	if (parsed[0] == "-")
 		answer.push_back("0");
 
-	for (std::string& tmp : parsed) {
-		if (tmp[0] >= '0' && tmp[0] <= '9') {
+	for (auto& tmp : parsed) {
+		if (isdigit(tmp[0])) {
 			answer.push_back(tmp);
 			continue;
 		}
@@ -246,7 +247,7 @@ double Calculator::Postfix_Calculate(std::vector<std::string>& str, std::map < s
 	std::stack<double> stack;
 	
 	for (auto tmp : str) {
-		if (tmp[0] >= '0' && tmp[0] <= '9') {
+		if (isdigit(tmp[0])) {
 			stack.push(static_cast<double>(stoi(tmp)));
 			continue;
 		}
