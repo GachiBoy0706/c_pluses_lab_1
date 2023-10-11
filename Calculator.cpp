@@ -174,13 +174,15 @@ std::vector<std::string> Calculator::Postfix_Entry(std::vector<std::string>& par
 				throw "Too many functions in a row";
 			if (i + 1 == parsed.size() - 1)
 				throw "Missing operands in the end of string";
+			if (parsed[i + 1][0] != '(')
+				throw "Missing bracket after function";
 		}
 		else if (std::isdigit(parsed[i][0])) {
 			if (std::isdigit(parsed[i + 1][0]))
 				throw "Too many operands in a row";
 			if (parsed[i + 1][0] == '(')
 				throw "Operand without operation before opening bracket";
-			if (i + 1 == parsed.size() - 1)
+			if (i + 1 == parsed.size() - 1 && (parsed[i + 1][0]) != ')')
 				throw "Missing operands in the end of string";
 		}
 		else if (parsed[i][0] == '+' || parsed[i][0] == '-' || parsed[i][0] == '*' || parsed[i][0] == '/' || parsed[i][0] == '^') {

@@ -8,14 +8,20 @@ int main() {
 	std::vector<std::string> par;
 	Calculator calc;
 	double ans;
-	try {
-		ans = calc.Calculate(str);
+	while (str != "") {
+		try {
+			ans = calc.Calculate(str);
+		}
+		catch (const char* error_message) {
+			std::cout << error_message << std::endl;
+			//return -1;
+			std::getline(std::cin, str);
+			continue;
+		}
+		
+		std::cout << ans << std::endl;
+		std::getline(std::cin, str);
+		
 	}
-	catch(const char* error_message){
-		std::cout << error_message << std::endl;
-		return -1;
-	}
-	
-	std::cout << ans;
 	return 0;
 }
